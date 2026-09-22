@@ -44,7 +44,7 @@ public class Plot : MonoBehaviour
         if (shopManager.TryPurchaseTower(transform.position))
         {
             
-            sr.enabled = false;
+            sr.enabled = true;
         }
     }
 
