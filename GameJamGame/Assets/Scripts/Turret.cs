@@ -13,8 +13,11 @@ public class Turret : MonoBehaviour
 
     [Header("Attribute")]
     [SerializeField] private float targetingRange = 5f;
+    [SerializeField] private float laneWidth = 2f;
     [SerializeField] private float bps = 1f; // Bullet per second
     [SerializeField] private float rotationSpeed = 5f;
+
+   
 
     private Transform target;
     private float timeUntilFire;
@@ -68,8 +71,15 @@ public class Turret : MonoBehaviour
 
     private void FindTarget()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, targetingRange, enemyMask);
-        
+        Vector2 boxCenter =
+        (Vector2)transform.position + Vector2.down * (targetingRange / 2f);
+
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(
+            boxCenter,
+            new Vector2(laneWidth, targetingRange),
+            0f,
+            enemyMask
+        );
 
         if (colliders.Length > 0)
         {
@@ -84,7 +94,15 @@ public class Turret : MonoBehaviour
     private bool CheckTargetIsInRange()
     {
         if (target == null) return false;
-        return Vector2.Distance(target.position, transform.position) <= targetingRange;
+
+        float xDistance = Mathf.Abs(target.position.x - transform.position.x);
+
+        // How far BELOW the turret the zombie is
+        float yDistance = transform.position.y - target.position.y;
+
+        return xDistance <= laneWidth / 2f &&
+            yDistance >= 0f &&
+            yDistance <= targetingRange;
     }
 
     private void RotateTowardsTarget()
@@ -106,7 +124,14 @@ public class Turret : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        UnityEditor.Handles.color = Color.cyan;
-        UnityEditor.Handles.DrawWireDisc(transform.position, transform.forward, targetingRange);
+        Gizmos.color = Color.cyan;
+
+        Vector3 boxCenter =
+            transform.position + Vector3.down * (targetingRange / 2f);
+
+        Gizmos.DrawWireCube(
+            boxCenter,
+            new Vector3(laneWidth, targetingRange, 0f)
+        );
     }
 }
