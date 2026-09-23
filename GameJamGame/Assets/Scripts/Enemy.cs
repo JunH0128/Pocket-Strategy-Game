@@ -11,8 +11,10 @@ public class Enemy : MonoBehaviour
     [Header("Base Damage Settings")]
     [SerializeField] private int damageToBase = 1;
 
+    [SerializeField] private GameObject deathParticle;
+
     private Rigidbody2D rb;
-    
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -20,34 +22,14 @@ public class Enemy : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Move upward
         rb.velocity = Vector2.up * movSpeed;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void Die()
     {
-        if (collision.collider != null && collision.collider.CompareTag("Enemy"))
-        {
-            ReachedBase();
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other != null && other.CompareTag("Enemy"))
-        {
-            ReachedBase();
-        }
-    }
-
-    private void ReachedBase()
-    {
-        BaseHealth baseHealth = FindObjectOfType<BaseHealth>();
-        if (baseHealth != null)
-        {
-            baseHealth.TakeDamage(damageToBase);
-        }
-
-        EnemySpawner.onEnemyDestroy.Invoke();
+        Debug.Log("ENEMY DIED");
+        Instantiate(deathParticle, transform.position, Quaternion.identity);
 
         Destroy(gameObject);
     }
