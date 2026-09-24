@@ -31,6 +31,11 @@ public class TowerShopManager : MonoBehaviour
     [SerializeField] private Color normalCardColor = Color.white;
     [SerializeField] private Color cannotAffordColor = new Color(0.5f, 0.5f, 0.5f, 1f);
 
+    [Header("Zombie Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip  zombiePlaceSound;
+
+
     private TowerData selectedTower;
     private GameObject selectedTowerPrefab;
     private Button selectedButton;
@@ -172,7 +177,11 @@ public class TowerShopManager : MonoBehaviour
         if (EnemyManager.main.SpendCurrency(selectedTower.cost))
         {
             Instantiate(selectedTowerPrefab, position, Quaternion.identity);
-            
+
+            if (audioSource != null && zombiePlaceSound != null)
+            {
+                audioSource.PlayOneShot(zombiePlaceSound);
+            }
             
             
             if (selectedButton != null)

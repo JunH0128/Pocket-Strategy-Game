@@ -17,6 +17,14 @@ public class Turret : MonoBehaviour
     [SerializeField] private float bps = 1f; // Bullet per second
     [SerializeField] private float rotationSpeed = 5f;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip shootSound;
+
+
+
+
+
    
 
     private Transform target;
@@ -67,6 +75,11 @@ public class Turret : MonoBehaviour
         GameObject bulletObj = Instantiate(bulletPrefab, firingPoint.position, Quaternion.identity);
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
         bulletScript.SetTarget(target);
+        
+        if (audioSource != null && shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound);
+        }
     }
 
     private void FindTarget()
